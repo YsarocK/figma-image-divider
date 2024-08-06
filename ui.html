@@ -1,0 +1,19 @@
+<h2>Rectangle Creator</h2>
+<p>Number of posts: <input id="post_counts" value="3"></p>
+<p>Posts sizes (px)<input id="post_size" value="2000"></p>
+<button id="create">Create</button>
+<button id="cancel">Cancel</button>
+
+<script>
+document.getElementById('create').onclick = () => {
+  const post_counts = document.getElementById('post_counts');
+  const count = parseInt(post_counts.value, 10);
+  const post_size = document.getElementById('post_size');
+  const size = parseInt(post_size.value, 10);
+  parent.postMessage({ pluginMessage: { type: 'create-workspace', count, size } }, '*')
+}
+
+document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+}
+</script>
