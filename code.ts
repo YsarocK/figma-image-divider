@@ -25,6 +25,7 @@ class GridMaker {
   private init() {
     this.createMainComponent();
     this.generateNodes();
+    this.generateDeadZone();
   }
 
   createMainComponent() {
@@ -34,11 +35,14 @@ class GridMaker {
     this.mainComponent = figma.createComponentFromNode(this.mainFrame);
     figma.currentPage.appendChild(this.mainComponent);
 
+    
     figma.currentPage.selection = this.nodes;
     figma.viewport.scrollAndZoomIntoView(this.nodes);
   }
 
   generateNodes({ count, size }: GridMakerProps = { count: this.count, size: this.size }) {
+    this.count = count;
+    this.size = size;
     for (let i = 0; i < count; i++) {
       const rect = figma.createFrame();
       rect.resize(size, size);
@@ -51,6 +55,22 @@ class GridMaker {
       this.nodes.push(rect);
     }
   };
+
+  generateDeadZone() {
+    const DEAD_ZONE = this.mainComponent.width - (this.count * this.size);
+    this.mainComponent.layoutGrids = [
+      {
+        visible: true,
+        color: { r: 1, g: 0, b: 0, a: 0.1 },
+        pattern: "COLUMNS",
+        alignment: "MAX",
+        sectionSize: DEAD_ZONE,
+        count: 1,
+        gutterSize: 20,
+        offset: 0,
+      }
+    ]
+  }
 
   deleteNodes() {
     this.nodes.forEach((node) => {
@@ -76,6 +96,7 @@ figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) 
         const count = Math.floor(grid.mainComponent.width / grid.mainComponent.height)
         grid.deleteNodes();
         grid.generateNodes({ count, size: grid.mainComponent.height });
+        grid.generateDeadZone();
       }
     });
   }
