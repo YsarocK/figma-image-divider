@@ -22,7 +22,7 @@ class GridMaker {
     this.init();
   }
 
-  init() {
+  private init() {
     this.createMainComponent();
     this.generateNodes();
   }
@@ -61,12 +61,11 @@ class GridMaker {
 
   exportAll() {
     figma.currentPage.selection = this.nodes;
-    figma.currentPage.selection.exportAsync({ format: 'PNG' });
   }
 }
 
 figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) => {
-  if (msg.type === 'create-workspace') {
+  if (msg.type === 'image-divider') {
     const grid = new GridMaker({ count: msg.count, size: msg.size });
     
     await figma.loadAllPagesAsync();
