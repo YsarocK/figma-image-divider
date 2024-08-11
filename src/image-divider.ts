@@ -66,23 +66,25 @@ class ImageDivider {
   }
 
   public generate({ count, size } = { count: this.count, size: this.size }) {
-    if(this.generatedNodes.length > 0) {
-      this.deleteNodes();
-    }
-
-    this.count = count;
-    this.size = size;
-    
-    for (let i = 0; i < count; i++) {
-      const rect = figma.createFrame();
-      rect.resize(size, size);
-      rect.x = i * (size + 150);
-      rect.y = 1.25 * size;
-      const compInstance = this.mainComponent.createInstance();
-      compInstance.x = (-1 * size) * i;
-      rect.insertChild(0, compInstance);
-      figma.currentPage.appendChild(rect);
-      this.generatedNodes.push(rect.id)
+    if (this.count === count || this.size === size || this.generatedNodes.length > 0) {
+      if(this.generatedNodes.length > 0) {
+        this.deleteNodes();
+      }
+  
+      this.count = count;
+      this.size = size;
+      
+      for (let i = 0; i < count; i++) {
+        const rect = figma.createFrame();
+        rect.resize(size, size);
+        rect.x = i * (size + 150);
+        rect.y = 1.25 * size;
+        const compInstance = this.mainComponent.createInstance();
+        compInstance.x = (-1 * size) * i;
+        rect.insertChild(0, compInstance);
+        figma.currentPage.appendChild(rect);
+        this.generatedNodes.push(rect.id)
+      }
     }
 
     this.generateDeadZone();
