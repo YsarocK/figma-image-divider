@@ -1,34 +1,40 @@
 interface ImageDividerProps {
-  count: number;
-  size: number;
+  withParams?: {
+    count: number;
+    size: number;
+  };
+  withNodes?: {
+    main: ComponentNode;
+    generated: string[];
+  };
 };
 
 interface ImageDivider {
   count: number;
   size: number;
-  dead_zone: number;
-  nodes: string[];
+  deadZone: number;
+  generatedNodes: string[];
   mainFrame: FrameNode;
   mainComponent: ComponentNode;
 }
 
 class ImageDivider {
-  constructor({ initParams, components }: { initParams?: ImageDividerProps, components?: { main: ComponentNode, nodes: string[] } }) {
-    if(components) {
-      this.mainComponent = components.main;
-      this.nodes = components.nodes;
+  constructor({ withParams, withNodes }: ImageDividerProps) {
+    if(withNodes) {
+      this.mainComponent = withNodes.main;
+      this.generatedNodes = withNodes.generated;
       this.count = Math.floor(this.mainComponent.width / this.mainComponent.height)
       this.size = this.mainComponent.height;
     }
 
-    if(initParams) {
-      this.count = initParams.count;
-      this.size = initParams.size;
-      this.nodes = [];
+    if(withParams) {
+      this.count = withParams.count;
+      this.size = withParams.size;
+      this.generatedNodes = [];
   
       this.createMainComponent();
     }
-    
+
     this.init();
   }
 
@@ -40,7 +46,6 @@ class ImageDivider {
   public async listener() {
     await figma.loadAllPagesAsync();
     figma.on('documentchange', ({ documentChanges }: { documentChanges: any }) => {
-      console.log(this.nodes)
       const { id } = documentChanges[0];
 
       if (id === this.mainComponent.id) {
@@ -60,8 +65,8 @@ class ImageDivider {
     this.mainComponent.setRelaunchData({ edit: 'Activate dynamic resize & frames.' });
   }
 
-  generate({ count, size }: ImageDividerProps = { count: this.count, size: this.size }) {
-    if(this.nodes.length > 0) {
+  public generate({ count, size } = { count: this.count, size: this.size }) {
+    if(this.generatedNodes.length > 0) {
       this.deleteNodes();
     }
 
@@ -77,27 +82,27 @@ class ImageDivider {
       compInstance.x = (-1 * size) * i;
       rect.insertChild(0, compInstance);
       figma.currentPage.appendChild(rect);
-      this.nodes.push(rect.id)
+      this.generatedNodes.push(rect.id)
     }
 
     this.generateDeadZone();
     
     this.mainComponent.setPluginData('class', JSON.stringify({
       mainComponent: this.mainComponent,
-      nodes: this.nodes,
+      nodes: this.generatedNodes,
     }));
   };
 
   private generateDeadZone() {
     console.log('generateDeadZone')
-    this.dead_zone = this.mainComponent.width - (this.count * this.size);
+    this.deadZone = this.mainComponent.width - (this.count * this.size);
     this.mainComponent.layoutGrids = [
       {
         visible: true,
         color: { r: 1, g: 0, b: 0, a: 0.1 },
         pattern: "COLUMNS",
         alignment: "MAX",
-        sectionSize: this.dead_zone,
+        sectionSize: this.deadZone,
         count: 1,
         gutterSize: 20,
         offset: 0,
@@ -106,13 +111,13 @@ class ImageDivider {
   }
 
   private deleteNodes() {
-    this.nodes.forEach(async (nodeId) => {
+    this.generatedNodes.forEach(async (nodeId) => {
       const node = await figma.getNodeByIdAsync(nodeId);
       if (node) {
           node.remove();
       }
     });
-    this.nodes = [];
+    this.generatedNodes = [];
   }
 }
 

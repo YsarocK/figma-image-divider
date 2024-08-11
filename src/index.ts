@@ -9,7 +9,7 @@ figma.showUI(__html__, {
 
 figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) => {
   if (msg.type === 'image-divider') {
-    new ImageDivider({ initParams: { count: msg.count, size: msg.size } });
+    new ImageDivider({ withParams: { count: msg.count, size: msg.size } });
   }
 };
 
@@ -19,11 +19,11 @@ if(command === 'edit') {
   if(selection.type === 'COMPONENT') {
     const classData = new ImageDivider(
       {
-        components: {
+        withNodes: {
           main: selection as ComponentNode,
-          nodes:  JSON.parse(selection.getPluginData('class')).nodes 
+          generated:  JSON.parse(selection.getPluginData('class')).nodes 
       }
     });
-    classData.nodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
+    classData.generatedNodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
   }
 }
