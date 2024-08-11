@@ -19,8 +19,9 @@ if(command === 'edit') {
   if(selection.type === 'COMPONENT') {
     const classData = new ImageDivider(
       {
-        components: { main: selection as ComponentNode,
-        nodes:  JSON.parse(selection.getPluginData('class')).nodes 
+        components: {
+          main: selection as ComponentNode,
+          nodes:  JSON.parse(selection.getPluginData('class')).nodes 
       }
     });
     classData.nodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
