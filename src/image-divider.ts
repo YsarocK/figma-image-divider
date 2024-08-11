@@ -1,8 +1,3 @@
-figma.showUI(__html__, {
-  height: 300,
-  title: 'Instagram Multi Post Divider',
-});
-
 interface ImageDividerProps {
   count: number;
   size: number;
@@ -114,7 +109,6 @@ class ImageDivider {
   }
 
   private deleteNodes() {
-    console.log('Deleting nodes');
     this.nodes.forEach(async (nodeId) => {
         const node = await figma.getNodeByIdAsync(nodeId);
         if (node) {
@@ -128,20 +122,4 @@ class ImageDivider {
   }
 }
 
-figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) => {
-  if (msg.type === 'image-divider') {
-    new ImageDivider({ initParams: { count: msg.count, size: msg.size } });
-  }
-};
-
-const command = figma.command;
-
-if(command === 'edit') {
-  console.log('Relaunching');
-  const lastSelection = figma.currentPage.selection[0];
-  
-  if(lastSelection.type === 'COMPONENT') {
-    const classData = new ImageDivider({ components: { main: lastSelection as ComponentNode, nodes:  JSON.parse(lastSelection.getPluginData('class')).nodes }});
-    classData.nodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
-  }
-}
+export { ImageDivider };

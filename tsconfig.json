@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "module": "ESNext",
     "lib": ["es6"],
     "strict": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"
-    ]
-  }
+    ],
+    "importHelpers": true,  // Assure-toi que cette option est activée
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "./",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
