@@ -19,8 +19,6 @@ class ImageDivider {
       this.nodes = components.nodes;
       this.count = Math.floor(this.mainComponent.width / this.mainComponent.height)
       this.size = this.mainComponent.height;
-
-      this.init();
     }
 
     if(initParams) {
@@ -29,8 +27,9 @@ class ImageDivider {
       this.nodes = [];
   
       this.createMainComponent();
-      this.init();
     }
+    
+    this.init();
   }
 
   public async init() {
@@ -58,9 +57,6 @@ class ImageDivider {
     this.mainComponent = figma.createComponentFromNode(this.mainFrame);
     figma.currentPage.appendChild(this.mainComponent);
 
-    // figma.currentPage.selection = this.nodes;
-    // figma.viewport.scrollAndZoomIntoView(this.mainFrame);
-
     this.mainComponent.setRelaunchData({ edit: 'Activate dynamic resize & frames.' });
   }
 
@@ -82,10 +78,10 @@ class ImageDivider {
       rect.insertChild(0, compInstance);
       figma.currentPage.appendChild(rect);
       this.nodes.push(rect.id)
-  }
+    }
 
     this.generateDeadZone();
-
+    
     this.mainComponent.setPluginData('class', JSON.stringify({
       mainComponent: this.mainComponent,
       nodes: this.nodes,
@@ -93,6 +89,7 @@ class ImageDivider {
   };
 
   private generateDeadZone() {
+    console.log('generateDeadZone')
     this.dead_zone = this.mainComponent.width - (this.count * this.size);
     this.mainComponent.layoutGrids = [
       {
@@ -110,13 +107,10 @@ class ImageDivider {
 
   private deleteNodes() {
     this.nodes.forEach(async (nodeId) => {
-        const node = await figma.getNodeByIdAsync(nodeId);
-        if (node) {
-            console.log('Deleting node', node);
-            node.remove();
-        } else {
-            console.log('Node not found:', nodeId);
-        }
+      const node = await figma.getNodeByIdAsync(nodeId);
+      if (node) {
+          node.remove();
+      }
     });
     this.nodes = [];
   }
