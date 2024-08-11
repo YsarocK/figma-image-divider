@@ -1,25 +1,101 @@
-<div>
-  <h2>Rectangle Creator</h2>
-  <p>Number of posts: <input id="post_counts" value="3"></p>
-  <p>Posts sizes (px)<input id="post_size" value="2000"></p>
-  <button id="create">Create</button>
-  <button id="cancel">Cancel</button>
-</div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://static.figma.com/api/figma-extension-api-0.0.1.css">
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #1D1D1D;
+        border-radius: 8px;
+      }
+      
+      form {
+        background-color: #FFFFFF;
+      }
 
-<script>
-document.getElementById('create').onclick = () => {
-  const post_counts = document.getElementById('post_counts');
-  const count = parseInt(post_counts.value, 10);
-  const post_size = document.getElementById('post_size');
-  const size = parseInt(post_size.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'image-divider', count, size } }, '*')
-}
+      .fields {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      h2 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: #333333;
+      }
+      
+      label {
+        margin: 0 0 12px 0;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #a1a1a1;
+      }
+      
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 4px;
+        border: 1px solid #CCCCCC;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+        color: #333333;
+      }
+      
+      button {
+        background-color: #4CE0B3;
+        color: #377771;
+        border: none;
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.3s ease;
+      }
+    
+      button#cancel {
+        background-color: transparent;
+        margin-left: 12px;
+        color: #ED6A5E;
+      }
+      
+      .ctas {
+        display: flex;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <h2>Instagram Multi Post Divider</h2>
+      <div class="fields">
+        <label>Number of posts: <input id="post_counts" value="3"></label>
+        <label>Posts sizes (px): <input id="post_size" value="2000"></label>
+      </div> 
+      <div class="ctas">
+        <button id="create" type="button">Create</button>
+        <button id="cancel" type="button">Cancel</button>
+      </div>
+    </form>
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
-</script>
+    <script>
+      document.getElementById('create').onclick = () => {
+        const post_counts = document.getElementById('post_counts');
+        const count = parseInt(post_counts.value, 10);
+        const post_size = document.getElementById('post_size');
+        const size = parseInt(post_size.value, 10);
+        parent.postMessage({ pluginMessage: { type: 'image-divider', count, size } }, '*');
+      }
 
-<style>
-
-</style>
+      document.getElementById('cancel').onclick = () => {
+        parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+      }
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
-  "name": "multi-post grid",
-  "id": "1402406608102331474",
+  "name": "Instagram Multi Post Divider",
+  "id": "1404504388817621156",
   "api": "1.0.0",
   "main": "code.js",
   "capabilities": [],
@@ -14,5 +14,12 @@
     "allowedDomains": [
       "none"
     ]
-  }
+  },
+  "menu": [
+    { "name": "New", "command": "new" },
+    { "name": "Edit", "command": "edit" }
+  ],
+  "relaunchButtons": [
+    { "command": "edit", "name": "Edit", "multipleSelection": false }
+  ]
 }

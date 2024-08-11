@@ -1,48 +1,82 @@
-figma.showUI(__html__);
+figma.showUI(__html__, {
+  height: 300,
+  title: 'Instagram Multi Post Divider',
+});
 
-interface GridMakerProps {
+interface ImageDividerProps {
   count: number;
   size: number;
 };
 
-interface GridMaker {
+interface ImageDivider {
   count: number;
   size: number;
-  nodes: FrameNode[];
+  dead_zone: number;
+  nodes: string[];
   mainFrame: FrameNode;
   mainComponent: ComponentNode;
 }
 
-class GridMaker {
-  constructor({ count, size }: GridMakerProps) {
-    this.count = count;
-    this.size = size;
-    this.nodes = [];
+class ImageDivider {
+  constructor({ initParams, components }: { initParams?: ImageDividerProps, components?: { main: ComponentNode, nodes: string[] } }) {
+    if(components) {
+      this.mainComponent = components.main;
+      this.nodes = components.nodes;
+      this.count = Math.floor(this.mainComponent.width / this.mainComponent.height)
+      this.size = this.mainComponent.height;
 
-    this.init();
+      this.init();
+    }
+
+    if(initParams) {
+      this.count = initParams.count;
+      this.size = initParams.size;
+      this.nodes = [];
+  
+      this.createMainComponent();
+      this.init();
+    }
   }
 
-  private init() {
-    this.createMainComponent();
-    this.generateNodes();
-    this.generateDeadZone();
+  public async init() {
+    this.generate();
+    this.listener();
   }
 
-  createMainComponent() {
+  public async listener() {
+    await figma.loadAllPagesAsync();
+    figma.on('documentchange', ({ documentChanges }: { documentChanges: any }) => {
+      console.log(this.nodes)
+      const { id } = documentChanges[0];
+
+      if (id === this.mainComponent.id) {
+        const count = Math.floor(this.mainComponent.width / this.mainComponent.height)
+        this.generate({ count, size: this.mainComponent.height });
+      }
+    });
+  }
+
+  private createMainComponent() {
     this.mainFrame = figma.createFrame();
     this.mainFrame.resize(this.count * this.size, this.size);
     this.mainFrame.clipsContent = true;
     this.mainComponent = figma.createComponentFromNode(this.mainFrame);
     figma.currentPage.appendChild(this.mainComponent);
 
-    
-    figma.currentPage.selection = this.nodes;
-    figma.viewport.scrollAndZoomIntoView(this.nodes);
+    // figma.currentPage.selection = this.nodes;
+    // figma.viewport.scrollAndZoomIntoView(this.mainFrame);
+
+    this.mainComponent.setRelaunchData({ edit: 'Activate dynamic resize & frames.' });
   }
 
-  generateNodes({ count, size }: GridMakerProps = { count: this.count, size: this.size }) {
+  generate({ count, size }: ImageDividerProps = { count: this.count, size: this.size }) {
+    if(this.nodes.length > 0) {
+      this.deleteNodes();
+    }
+
     this.count = count;
     this.size = size;
+    
     for (let i = 0; i < count; i++) {
       const rect = figma.createFrame();
       rect.resize(size, size);
@@ -52,19 +86,26 @@ class GridMaker {
       compInstance.x = (-1 * size) * i;
       rect.insertChild(0, compInstance);
       figma.currentPage.appendChild(rect);
-      this.nodes.push(rect);
-    }
+      this.nodes.push(rect.id)
+  }
+
+    this.generateDeadZone();
+
+    this.mainComponent.setPluginData('class', JSON.stringify({
+      mainComponent: this.mainComponent,
+      nodes: this.nodes,
+    }));
   };
 
-  generateDeadZone() {
-    const DEAD_ZONE = this.mainComponent.width - (this.count * this.size);
+  private generateDeadZone() {
+    this.dead_zone = this.mainComponent.width - (this.count * this.size);
     this.mainComponent.layoutGrids = [
       {
         visible: true,
         color: { r: 1, g: 0, b: 0, a: 0.1 },
         pattern: "COLUMNS",
         alignment: "MAX",
-        sectionSize: DEAD_ZONE,
+        sectionSize: this.dead_zone,
         count: 1,
         gutterSize: 20,
         offset: 0,
@@ -72,32 +113,35 @@ class GridMaker {
     ]
   }
 
-  deleteNodes() {
-    this.nodes.forEach((node) => {
-      node.remove();
+  private deleteNodes() {
+    console.log('Deleting nodes');
+    this.nodes.forEach(async (nodeId) => {
+        const node = await figma.getNodeByIdAsync(nodeId);
+        if (node) {
+            console.log('Deleting node', node);
+            node.remove();
+        } else {
+            console.log('Node not found:', nodeId);
+        }
     });
     this.nodes = [];
-  }
-
-  exportAll() {
-    figma.currentPage.selection = this.nodes;
   }
 }
 
 figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) => {
   if (msg.type === 'image-divider') {
-    const grid = new GridMaker({ count: msg.count, size: msg.size });
-    
-    await figma.loadAllPagesAsync();
-    figma.on('documentchange', ({ documentChanges }) => {
-      const { id } = documentChanges[0];
-
-      if (id === grid.mainComponent.id) {
-        const count = Math.floor(grid.mainComponent.width / grid.mainComponent.height)
-        grid.deleteNodes();
-        grid.generateNodes({ count, size: grid.mainComponent.height });
-        grid.generateDeadZone();
-      }
-    });
+    new ImageDivider({ initParams: { count: msg.count, size: msg.size } });
   }
 };
+
+const command = figma.command;
+
+if(command === 'edit') {
+  console.log('Relaunching');
+  const lastSelection = figma.currentPage.selection[0];
+  
+  if(lastSelection.type === 'COMPONENT') {
+    const classData = new ImageDivider({ components: { main: lastSelection as ComponentNode, nodes:  JSON.parse(lastSelection.getPluginData('class')).nodes }});
+    classData.nodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
+  }
+}
