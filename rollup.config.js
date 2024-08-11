@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import { IndentStyle } from 'typescript';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

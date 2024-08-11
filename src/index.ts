@@ -14,14 +14,13 @@ figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) 
 };
 
 if(command === 'edit') {
-  console.log('Relaunching');
-  const lastSelection = figma.currentPage.selection[0];
+  const selection = figma.currentPage.selection[0];
   
-  if(lastSelection.type === 'COMPONENT') {
+  if(selection.type === 'COMPONENT') {
     const classData = new ImageDivider(
       {
-        components: { main: lastSelection as ComponentNode,
-        nodes:  JSON.parse(lastSelection.getPluginData('class')).nodes 
+        components: { main: selection as ComponentNode,
+        nodes:  JSON.parse(selection.getPluginData('class')).nodes 
       }
     });
     classData.nodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
