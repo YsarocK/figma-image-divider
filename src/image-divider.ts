@@ -91,7 +91,7 @@ class ImageDivider {
     
     this.mainComponent.setPluginData('class', JSON.stringify({
       mainComponent: this.mainComponent,
-      nodes: this.generatedNodes,
+      generatedNodes: this.generatedNodes,
     }));
   };
 

@@ -17,13 +17,12 @@ if(command === 'edit') {
   const selection = figma.currentPage.selection[0];
   
   if(selection.type === 'COMPONENT') {
-    const classData = new ImageDivider(
+    new ImageDivider(
       {
         withNodes: {
           main: selection as ComponentNode,
-          generated:  JSON.parse(selection.getPluginData('class')).nodes 
+          generated:  JSON.parse(selection.getPluginData('class')).generatedNodes 
       }
     });
-    classData.generatedNodes = JSON.parse(classData.mainComponent.getPluginData('class')).nodes;
   }
 }
