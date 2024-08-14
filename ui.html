@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://static.figma.com/api/figma-extension-api-0.0.1.css">
     <style>
       body {
-        font-family: 'Roboto', sans-serif;
+        font-family: "IBM Plex Mono", monospace;
         margin: 0;
         padding: 20px;
         color: #1D1D1D;
@@ -13,6 +13,12 @@
       
       form {
         background-color: #FFFFFF;
+      }
+
+      .logo {
+        width: 50px;
+        border-radius: 2px;
+        margin-bottom: 20px;
       }
 
       .fields {
@@ -47,22 +53,27 @@
       }
       
       button {
-        background-color: #4CE0B3;
-        color: #377771;
+        background-color: #00712D;
+        color: #FFFBE6;
         border: none;
+        letter-spacing: -0.05rem;
         text-transform: uppercase;
         font-weight: 700;
-        padding: 8px 16px;
+        padding: 10px 30px;
         border-radius: 4px;
         cursor: pointer;
         font-size: 12px;
         transition: background-color 0.3s ease;
       }
+
+      button#create {
+        box-shadow: 0 4px 50px 5px rgba(0, 113, 45, 0.2);
+      }
     
       button#cancel {
         background-color: transparent;
         margin-left: 12px;
-        color: #ED6A5E;
+        color: #FF9100;
       }
       
       .ctas {
@@ -73,6 +84,7 @@
   </head>
   <body>
     <form>
+      <img class="logo" src="https://raw.githubusercontent.com/YsarocK/figma-image-divider/master/logo.png">
       <h2>Instagram Multi Post Divider</h2>
       <div class="fields">
         <label>Number of posts: <input id="post_counts" value="3"></label>
@@ -80,7 +92,6 @@
       </div> 
       <div class="ctas">
         <button id="create" type="button">Create</button>
-        <button id="cancel" type="button">Cancel</button>
       </div>
     </form>
 

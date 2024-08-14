@@ -3,8 +3,12 @@ import { ImageDivider } from "./image-divider";
 const command = figma.command;
 
 figma.showUI(__html__, {
-  height: 300,
+  height: 400,
   title: 'Instagram Multi Post Divider',
+  position: {
+    x: 0,
+    y: 0
+  }
 });
 
 figma.ui.onmessage = async (msg: { type: string, count: number, size: number }) => {
