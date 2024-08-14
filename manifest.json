@@ -16,8 +16,7 @@
     ]
   },
   "menu": [
-    { "name": "New", "command": "new" },
-    { "name": "Edit", "command": "edit" }
+    { "name": "New", "command": "new" }
   ],
   "relaunchButtons": [
     { "command": "edit", "name": "Edit", "multipleSelection": false }

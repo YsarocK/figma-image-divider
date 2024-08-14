@@ -96,7 +96,6 @@ class ImageDivider {
   };
 
   private generateDeadZone() {
-    console.log('generateDeadZone')
     this.deadZone = this.mainComponent.width - (this.count * this.size);
     this.mainComponent.layoutGrids = [
       {
